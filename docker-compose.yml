@@ -20,8 +20,8 @@ services:
     environment:
       DAYLIGHT_VALUE: "12336"
       NIGHT_VALUE: "12338"
-    command: ["python", "web.py"]
+    command: [ "python", "web.py" ]
     ports:
-      - "127.0.0.1:8080:8080"
+      - "8080:8080"
     volumes:
       - ./data:/data
