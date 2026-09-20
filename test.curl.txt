@@ -1,0 +1,40 @@
+set -a
+. ./.env
+set +a
+
+SALT=$(date +%s%3N)
+PASSWORD_SHA1=$(printf %s "$DESS_PASSWORD" | sha1sum | awk '{print $1}')
+TAIL="&action=authSource&usr=$DESS_USERNAME&source=1&company-key=$DESS_COMPANY_KEY"
+SIGN=$(printf %s "${SALT}${PASSWORD_SHA1}${TAIL}" | sha1sum | awk '{print $1}')
+
+curl --fail --get 'https://web.dessmonitor.com/public/' \
+  --data-urlencode "sign=$SIGN" \
+  --data-urlencode "salt=$SALT" \
+  --data-urlencode 'action=authSource' \
+  --data-urlencode "usr=$DESS_USERNAME" \
+  --data-urlencode 'source=1' \
+  --data-urlencode "company-key=$DESS_COMPANY_KEY"
+
+export DESS_TOKEN='CN8847a32d-1858-4133-ad94-ddacea7cd817'
+export DESS_SECRET='f20dcb4105070df85fefe32b2352e476c0ef91195a4dd29ad49039dda594072c'
+
+set -a
+. ./.env
+set +a
+
+SALT=$(date +%s%3N)
+TAIL="&action=queryDeviceCtrlValue&source=1&pn=$DESS_PN&sn=$DESS_SN&devcode=$DESS_DEVCODE&devaddr=$DESS_DEVADDR&id=bse_output_source_priority&i18n=en_US"
+SIGN=$(printf %s "${SALT}${DESS_SECRET}${DESS_TOKEN}${TAIL}" | sha1sum | awk '{print $1}')
+
+curl --get 'https://web.dessmonitor.com/public/' \
+  --data-urlencode "sign=$SIGN" \
+  --data-urlencode "salt=$SALT" \
+  --data-urlencode "token=$DESS_TOKEN" \
+  --data-urlencode 'action=queryDeviceCtrlValue' \
+  --data-urlencode 'source=1' \
+  --data-urlencode "pn=$DESS_PN" \
+  --data-urlencode "sn=$DESS_SN" \
+  --data-urlencode "devcode=$DESS_DEVCODE" \
+  --data-urlencode "devaddr=$DESS_DEVADDR" \
+  --data-urlencode 'id=bse_output_source_priority' \
+  --data-urlencode 'i18n=en_US'

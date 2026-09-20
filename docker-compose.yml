@@ -11,3 +11,17 @@ services:
       NIGHT_VALUE: "12338"
     volumes:
       - ./data:/data
+
+  dess-solar-dashboard:
+    build: .
+    restart: unless-stopped
+    user: "0:0"
+    env_file: .env
+    environment:
+      DAYLIGHT_VALUE: "12336"
+      NIGHT_VALUE: "12338"
+    command: ["python", "web.py"]
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./data:/data
